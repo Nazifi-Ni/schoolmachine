@@ -1,0 +1,17 @@
+{
+    "name": "iams/arms",
+    "description": "Ismail Ahmad Memorial School Academic Records Management System",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "dompdf/dompdf": "^3.0",
+        "phpmailer/phpmailer": "^6.9",
+        "phpoffice/phpspreadsheet": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "App\\Config\\": "config/"
+        }
+    }
+}

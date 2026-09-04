@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-outfit antialiased;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-lg rounded-2xl;
+  }
+  
+  .glass-button {
+    @apply bg-royal-blue/90 hover:bg-royal-blue text-white backdrop-blur-sm shadow-md transition-all rounded-lg px-4 py-2 font-medium;
+  }
+
+  .glass-input {
+    @apply bg-white/50 border border-slate-200 focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20 backdrop-blur-sm rounded-lg px-4 py-2 w-full outline-none transition-all;
+  }
+}

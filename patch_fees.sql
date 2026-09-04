@@ -1,0 +1,1 @@
+ALTER TABLE results ADD COLUMN past_balance DECIMAL(10,2) DEFAULT 0.00, ADD COLUMN next_term_fee DECIMAL(10,2) DEFAULT 0.00;  
