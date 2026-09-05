@@ -185,6 +185,7 @@ class TeacherController extends Controller
 
     private function apiCheckAuth()
     {
+        $this->restoreSessionFromToken();
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Head Teacher') {
             $this->jsonResponse(['error' => 'Unauthorized'], 403);
         }

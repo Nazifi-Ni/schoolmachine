@@ -73,6 +73,7 @@ class SubjectController extends Controller
 
     private function apiCheckAuth($classId = null)
     {
+        $this->restoreSessionFromToken();
         if (!isset($_SESSION['user_id'])) {
             $this->jsonResponse(['error' => 'Unauthorized'], 401);
         }
