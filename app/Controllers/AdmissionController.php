@@ -3,7 +3,7 @@ namespace App\Controllers;
 
 use App\Config\Database;
 
-class AdmissionController {
+class AdmissionController extends Controller {
     private $db;
 
     public function __construct() {
@@ -160,4 +160,5 @@ class AdmissionController {
         echo json_encode(['success' => true]);
     }
 }
+
 

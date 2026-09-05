@@ -3,7 +3,7 @@ namespace App\Controllers;
 
 use App\Config\Database;
 
-class FinanceController {
+class FinanceController extends Controller {
     private $db;
 
     public function __construct() {
@@ -345,5 +345,6 @@ class FinanceController {
         ]);
     }
 }
+
 
 
