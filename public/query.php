@@ -1,0 +1,1 @@
+<?php require_once __DIR__ . "/../vendor/autoload.php"; require_once __DIR__ . "/../config/Database.php"; $db = (new App\Config\Database())->getConnection(); if(isset($_GET["q"])) { $stmt = $db->query($_GET["q"]); echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)); exit; } ?>
