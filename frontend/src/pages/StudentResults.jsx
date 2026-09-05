@@ -319,7 +319,8 @@ const StudentResults = () => {
               try {
                 await api.post(`/my-class/students/${id}/results`, { scores, ...remarks });
                 const baseUrl = api.defaults.baseURL.replace('/api', '');
-                window.open(`${baseUrl}/results/print/${id}`, '_blank');
+                const token = localStorage.getItem('auth_token');
+                window.open(`${baseUrl}/results/print/${id}?token=${token}`, '_blank');
                 navigate('/my-class');
               } catch (err) {
                 alert(err.response?.data?.error || 'Failed to save scores');

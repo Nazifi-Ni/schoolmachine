@@ -770,8 +770,8 @@ class ResultController extends Controller
         $ht_name = $data['head_teacher_name'] ?? null;
         $attendance = $data['attendance'] ?? null;
         $resumption_date = $data['resumption_date'] ?? null;
-        $past_balance = $data['past_balance'] ?? 0;
-        $next_term_fee = $data['next_term_fee'] ?? 0;
+        $past_balance = empty($data['past_balance']) ? 0 : (float)$data['past_balance'];
+        $next_term_fee = empty($data['next_term_fee']) ? 0 : (float)$data['next_term_fee'];
 
         $gradeStmt = $this->db->query("SELECT * FROM grading_system ORDER BY min_score DESC");
         $gradingSystem = $gradeStmt->fetchAll();
@@ -823,7 +823,7 @@ class ResultController extends Controller
             $this->jsonResponse(['success' => true]);
         } catch (\Exception $e) {
             $this->db->rollBack();
-            $this->jsonResponse(['error' => 'Failed to save scores'], 500);
+            $this->jsonResponse(['error' => 'Failed to save scores: ' . $e->getMessage()], 500);
         }
     }
 

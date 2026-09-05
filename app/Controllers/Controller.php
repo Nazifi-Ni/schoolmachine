@@ -59,11 +59,17 @@ class Controller
         $headers = getallheaders();
         $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
 
-        if (strpos($auth_header, 'Bearer ') !== 0) {
+        $token = '';
+        if (strpos($auth_header, 'Bearer ') === 0) {
+            $token = substr($auth_header, 7);
+        } elseif (!empty($_GET['token'])) {
+            $token = $_GET['token'];
+        }
+        
+        if (empty($token)) {
             return;
         }
 
-        $token = substr($auth_header, 7);
         $decoded = base64_decode($token);
         $last_pipe = strrpos($decoded, '|');
 
