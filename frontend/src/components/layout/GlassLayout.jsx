@@ -53,9 +53,11 @@ const GlassLayout = () => {
   const handleLogout = async () => {
     try {
       await api.post('/logout');
-      navigate('/login');
     } catch (err) {
       console.error('Logout failed', err);
+    } finally {
+      localStorage.removeItem('auth_token');
+      navigate('/login');
     }
   };
 
