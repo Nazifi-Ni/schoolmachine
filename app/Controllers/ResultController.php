@@ -625,6 +625,7 @@ class ResultController extends Controller
 
     private function apiRequireTeacher()
     {
+        $this->restoreSessionFromToken();
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Class Teacher') {
             $this->jsonResponse(['error' => 'Unauthorized'], 403);
             exit;
@@ -838,5 +839,6 @@ class ResultController extends Controller
         $this->jsonResponse(['success' => true]);
     }
 }
+
 
 
