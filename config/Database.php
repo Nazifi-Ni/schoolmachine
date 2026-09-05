@@ -18,11 +18,11 @@ class Database
         $this->conn = null;
 
         // Get environment variables or fallback to defaults
-        $db_host = getenv('DB_HOST') ?: 'localhost';
-        $db_port = getenv('DB_PORT') ?: '5432';
-        $db_name = getenv('DB_NAME') ?: 'postgres';
-        $db_user = getenv('DB_USER') ?: 'postgres';
-        $db_pass = getenv('DB_PASS') ?: '';
+        $db_host = getenv('DB_HOST') ?: ($_SERVER['DB_HOST'] ?? 'localhost');
+        $db_port = getenv('DB_PORT') ?: ($_SERVER['DB_PORT'] ?? '5432');
+        $db_name = getenv('DB_NAME') ?: ($_SERVER['DB_NAME'] ?? 'postgres');
+        $db_user = getenv('DB_USER') ?: ($_SERVER['DB_USER'] ?? 'postgres');
+        $db_pass = getenv('DB_PASS') ?: ($_SERVER['DB_PASS'] ?? '');
 
         try {
             // PostgreSQL DSN
