@@ -45,8 +45,10 @@ class Router
 
     public function dispatch($uri, $requestMethod)
     {
-        // Add CORS headers for API (React frontend)
-        header('Access-Control-Allow-Origin: http://localhost:5173'); // Vite default port
+        // Add CORS headers dynamically to support Vercel and Localhost
+        if (isset($_SERVER['HTTP_ORIGIN'])) {
+            header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+        }
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
         header('Access-Control-Allow-Credentials: true');
