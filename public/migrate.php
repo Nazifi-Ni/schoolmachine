@@ -27,8 +27,8 @@ try {
     foreach ($tables as $table) {
         if (empty($data[$table])) continue;
         
-        // Get valid columns for this table from PostgreSQL
-        $stmt = $db->query("SELECT column_name FROM information_schema.columns WHERE table_name = '$table'");
+        // Fix: specify table_schema = public so we don't get auth.users columns
+        $stmt = $db->query("SELECT column_name FROM information_schema.columns WHERE table_name = '$table' AND table_schema = 'public'");
         $validColumns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         foreach ($data[$table] as $row) {
