@@ -15,13 +15,11 @@ if (!$data) {
     die("Invalid JSON");
 }
 
-// Corrected order: teachers must be before classes
 $tables = ["roles", "users", "sessions", "terms", "teachers", "classes", "students", "subjects", "grading_system", "results", "result_items", "fee_structures", "student_fees", "fee_payments"];
 
 try {
     $db->beginTransaction();
     
-    // Clear existing data to avoid conflicts with IDs, using the reverse order to avoid FK errors during TRUNCATE
     $reverseTables = array_reverse($tables);
     $tableList = implode(", ", $reverseTables);
     $db->exec("TRUNCATE $tableList CASCADE");
@@ -33,6 +31,11 @@ try {
         $validColumns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         foreach ($data[$table] as $row) {
+            // Manual remapping for teachers
+            if ($table === "teachers" && isset($row["last_name"])) {
+                $row["surname"] = $row["last_name"];
+            }
+            
             $filteredRow = [];
             foreach ($row as $key => $value) {
                 if (in_array($key, $validColumns)) {
