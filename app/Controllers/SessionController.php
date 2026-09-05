@@ -20,7 +20,7 @@ class SessionController extends Controller
         $db = (new Database())->getConnection();
         
         $sessions = $db->query("SELECT * FROM sessions ORDER BY id DESC")->fetchAll();
-        $terms = $db->query("SELECT t.*, s.name as session_name FROM terms t JOIN sessions s ON t.session_id = s.id WHERE s.is_current = 1 ORDER BY t.id DESC")->fetchAll();
+        $terms = $db->query("SELECT t.*, s.name as session_name FROM terms t JOIN sessions s ON t.session_id = s.id WHERE s.is_current = TRUE ORDER BY t.id DESC")->fetchAll();
 
         $this->view('sessions/index', [
             'title' => 'Manage Sessions & Terms',
@@ -43,7 +43,7 @@ class SessionController extends Controller
 
         try {
             // First session created should be current if none exists
-            $count = $db->query("SELECT COUNT(*) as count FROM sessions WHERE is_current = 1")->fetch()->count;
+            $count = $db->query("SELECT COUNT(*) as count FROM sessions WHERE is_current = TRUE")->fetch()->count;
             $isCurrent = ($count == 0) ? 1 : 0;
 
             $stmt = $db->prepare("INSERT INTO sessions (name, is_current) VALUES (:name, :is_current)");
@@ -63,8 +63,8 @@ class SessionController extends Controller
 
         try {
             $db->beginTransaction();
-            $db->query("UPDATE sessions SET is_current = 0");
-            $stmt = $db->prepare("UPDATE sessions SET is_current = 1 WHERE id = :id");
+            $db->query("UPDATE sessions SET is_current = FALSE");
+            $stmt = $db->prepare("UPDATE sessions SET is_current = TRUE WHERE id = :id");
             $stmt->execute([':id' => $id]);
             $db->commit();
         } catch (\Exception $e) {
@@ -111,7 +111,7 @@ class SessionController extends Controller
         }
 
         try {
-            $count = $db->query("SELECT COUNT(*) as count FROM terms WHERE is_current = 1")->fetch()->count;
+            $count = $db->query("SELECT COUNT(*) as count FROM terms WHERE is_current = TRUE")->fetch()->count;
             $isCurrent = ($count == 0) ? 1 : 0;
 
             $stmt = $db->prepare("INSERT INTO terms (name, session_id, is_current) VALUES (:name, :session_id, :is_current)");
@@ -132,8 +132,8 @@ class SessionController extends Controller
 
         try {
             $db->beginTransaction();
-            $db->query("UPDATE terms SET is_current = 0");
-            $stmt = $db->prepare("UPDATE terms SET is_current = 1 WHERE id = :id");
+            $db->query("UPDATE terms SET is_current = FALSE");
+            $stmt = $db->prepare("UPDATE terms SET is_current = TRUE WHERE id = :id");
             $stmt->execute([':id' => $id]);
             $db->commit();
         } catch (\Exception $e) {
@@ -177,7 +177,7 @@ class SessionController extends Controller
         }
 
         try {
-            $count = $db->query("SELECT COUNT(*) as count FROM sessions WHERE is_current = 1")->fetch()->count;
+            $count = $db->query("SELECT COUNT(*) as count FROM sessions WHERE is_current = TRUE")->fetch()->count;
             $isCurrent = ($count == 0) ? 1 : 0;
 
             $stmt = $db->prepare("INSERT INTO sessions (name, is_current) VALUES (:name, :is_current)");
@@ -198,8 +198,8 @@ class SessionController extends Controller
 
         try {
             $db->beginTransaction();
-            $db->query("UPDATE sessions SET is_current = 0");
-            $stmt = $db->prepare("UPDATE sessions SET is_current = 1 WHERE id = :id");
+            $db->query("UPDATE sessions SET is_current = FALSE");
+            $stmt = $db->prepare("UPDATE sessions SET is_current = TRUE WHERE id = :id");
             $stmt->execute([':id' => $id]);
             $db->commit();
             $this->jsonResponse(['success' => true]);
@@ -243,7 +243,7 @@ class SessionController extends Controller
         }
 
         try {
-            $count = $db->query("SELECT COUNT(*) as count FROM terms WHERE is_current = 1")->fetch()->count;
+            $count = $db->query("SELECT COUNT(*) as count FROM terms WHERE is_current = TRUE")->fetch()->count;
             $isCurrent = ($count == 0) ? 1 : 0;
 
             $stmt = $db->prepare("INSERT INTO terms (name, session_id, is_current) VALUES (:name, :session_id, :is_current)");
@@ -265,8 +265,8 @@ class SessionController extends Controller
 
         try {
             $db->beginTransaction();
-            $db->query("UPDATE terms SET is_current = 0");
-            $stmt = $db->prepare("UPDATE terms SET is_current = 1 WHERE id = :id");
+            $db->query("UPDATE terms SET is_current = FALSE");
+            $stmt = $db->prepare("UPDATE terms SET is_current = TRUE WHERE id = :id");
             $stmt->execute([':id' => $id]);
             $db->commit();
             $this->jsonResponse(['success' => true]);

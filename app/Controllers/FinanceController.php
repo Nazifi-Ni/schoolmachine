@@ -11,12 +11,12 @@ class FinanceController {
     }
 
     private function getCurrentSession() {
-        $stmt = $this->db->query("SELECT id FROM sessions WHERE is_current = 1 LIMIT 1");
+        $stmt = $this->db->query("SELECT id FROM sessions WHERE is_current = TRUE LIMIT 1");
         return $stmt->fetchColumn();
     }
 
     private function getCurrentTerm() {
-        $stmt = $this->db->query("SELECT id FROM terms WHERE is_current = 1 LIMIT 1");
+        $stmt = $this->db->query("SELECT id FROM terms WHERE is_current = TRUE LIMIT 1");
         return $stmt->fetchColumn();
     }
 

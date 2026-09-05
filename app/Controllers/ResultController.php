@@ -34,10 +34,10 @@ class ResultController extends Controller
             return;
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         // Get students
@@ -111,10 +111,10 @@ class ResultController extends Controller
             $this->redirect('/my-class');
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         if (!$currentSession || !$currentTerm) {
@@ -148,10 +148,10 @@ class ResultController extends Controller
         $stmt->execute([':teacher_id' => $teacher_id]);
         $class_id = $stmt->fetchColumn();
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         if ($class_id && $currentSession && $currentTerm && isset($_POST['name']) && !empty(trim($_POST['name']))) {
@@ -208,10 +208,10 @@ class ResultController extends Controller
             die("Student not found or not in your class.");
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         if (!$currentSession || !$currentTerm) {
@@ -273,10 +273,10 @@ class ResultController extends Controller
             $this->redirect('/my-class');
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $scores = $_POST['scores'] ?? [];
@@ -360,10 +360,10 @@ class ResultController extends Controller
             die("Student not found.");
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         // Get results
@@ -493,9 +493,9 @@ class ResultController extends Controller
             die("Class not found.");
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $stuStmt = $this->db->prepare("SELECT * FROM students WHERE current_class_id = ? AND status = 'active' ORDER BY surname, first_name ASC");
@@ -645,10 +645,10 @@ class ResultController extends Controller
             return;
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $studentStmt = $this->db->prepare("SELECT * FROM students WHERE current_class_id = :class_id AND status = 'active' ORDER BY surname, first_name ASC");
@@ -707,10 +707,10 @@ class ResultController extends Controller
             return;
         }
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $subStmt = $this->db->prepare("SELECT * FROM subjects WHERE class_id = ? AND session_id = ? AND term_id = ? ORDER BY name ASC");
@@ -752,10 +752,10 @@ class ResultController extends Controller
         $stmt->execute([':teacher_id' => $teacher_id]);
         $class = $stmt->fetch();
 
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $data = json_decode(file_get_contents('php://input'), true);
@@ -826,10 +826,10 @@ class ResultController extends Controller
     {
         $this->apiRequireTeacher();
         
-        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $this->db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessionStmt->fetch();
 
-        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
 
         $stmt = $this->db->prepare("DELETE FROM results WHERE student_id = ? AND session_id = ? AND term_id = ?");

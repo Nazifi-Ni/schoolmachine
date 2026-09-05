@@ -37,11 +37,11 @@ class StudentPortalController extends Controller
         $profile = $stmt->fetch();
 
         // Get current active session
-        $sessStmt = $this->db->query("SELECT id, name FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessStmt = $this->db->query("SELECT id, name FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessStmt->fetch();
         $sessionId = $currentSession ? $currentSession->id : null;
 
-        $termStmt = $this->db->query("SELECT id, name FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT id, name FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch();
         $termId = $currentTerm ? $currentTerm->id : null;
 
@@ -133,10 +133,10 @@ class StudentPortalController extends Controller
         $this->checkStudentAuth();
         $studentId = $_SESSION['student_id'];
         
-        $sessStmt = $this->db->query("SELECT id FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessStmt = $this->db->query("SELECT id FROM sessions WHERE is_current = TRUE LIMIT 1");
         $currentSession = $sessStmt->fetch(\PDO::FETCH_ASSOC);
         
-        $termStmt = $this->db->query("SELECT id FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $this->db->query("SELECT id FROM terms WHERE is_current = TRUE LIMIT 1");
         $currentTerm = $termStmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$currentSession || !$currentTerm) {

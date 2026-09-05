@@ -104,11 +104,11 @@ class SubjectController extends Controller
             $this->jsonResponse(['error' => 'Class not found'], 404);
         }
 
-        $sessionStmt = $db->query("SELECT * FROM sessions WHERE is_current = 1 LIMIT 1");
+        $sessionStmt = $db->query("SELECT * FROM sessions WHERE is_current = TRUE LIMIT 1");
         $session = $sessionStmt->fetch();
         $sessionId = $session ? $session->id : null;
         
-        $termStmt = $db->query("SELECT * FROM terms WHERE is_current = 1 LIMIT 1");
+        $termStmt = $db->query("SELECT * FROM terms WHERE is_current = TRUE LIMIT 1");
         $term = $termStmt->fetch();
         $termId = $term ? $term->id : null;
 
@@ -141,10 +141,10 @@ class SubjectController extends Controller
         }
 
         try {
-            $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = 1 LIMIT 1");
+            $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = TRUE LIMIT 1");
             $sessionId = $sessionStmt->fetchColumn();
             
-            $termStmt = $db->query("SELECT id FROM terms WHERE is_current = 1 LIMIT 1");
+            $termStmt = $db->query("SELECT id FROM terms WHERE is_current = TRUE LIMIT 1");
             $termId = $termStmt->fetchColumn();
 
             $stmt = $db->prepare("INSERT INTO subjects (name, class_id, session_id, term_id) VALUES (:name, :class_id, :session_id, :term_id)");

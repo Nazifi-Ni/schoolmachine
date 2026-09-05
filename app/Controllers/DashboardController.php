@@ -35,12 +35,12 @@ class DashboardController extends Controller
             $stats['total_classes'] = $stmt->fetch()->total;
 
             // Get current session
-            $stmt = $db->query("SELECT name FROM sessions WHERE is_current = 1");
+            $stmt = $db->query("SELECT name FROM sessions WHERE is_current = TRUE");
             $session = $stmt->fetch();
             $stats['current_session'] = $session ? $session->name : 'N/A';
 
             // Get current term
-            $stmt = $db->query("SELECT name FROM terms WHERE is_current = 1");
+            $stmt = $db->query("SELECT name FROM terms WHERE is_current = TRUE");
             $term = $stmt->fetch();
             $stats['current_term'] = $term ? $term->name : 'N/A';
             
@@ -73,9 +73,9 @@ class DashboardController extends Controller
                     $stats['total_students'] = $stmt->fetch()->total;
 
                     // Calculate pending results
-                    $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = 1 LIMIT 1");
+                    $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = TRUE LIMIT 1");
                     $currentSession = $sessionStmt->fetchColumn();
-                    $termStmt = $db->query("SELECT id FROM terms WHERE is_current = 1 LIMIT 1");
+                    $termStmt = $db->query("SELECT id FROM terms WHERE is_current = TRUE LIMIT 1");
                     $currentTerm = $termStmt->fetchColumn();
 
                     if ($currentSession && $currentTerm) {
@@ -143,11 +143,11 @@ class DashboardController extends Controller
             $stmt = $db->query("SELECT COUNT(*) as total FROM classes");
             $stats['total_classes'] = $stmt->fetch()->total;
 
-            $stmt = $db->query("SELECT name FROM sessions WHERE is_current = 1");
+            $stmt = $db->query("SELECT name FROM sessions WHERE is_current = TRUE");
             $session = $stmt->fetch();
             $stats['current_session'] = $session ? $session->name : 'N/A';
 
-            $stmt = $db->query("SELECT name FROM terms WHERE is_current = 1");
+            $stmt = $db->query("SELECT name FROM terms WHERE is_current = TRUE");
             $term = $stmt->fetch();
             $stats['current_term'] = $term ? $term->name : 'N/A';
             // Recent Activities for Head Teacher
@@ -178,9 +178,9 @@ class DashboardController extends Controller
                     $stmt->execute();
                     $stats['total_students'] = $stmt->fetch()->total;
 
-                    $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = 1 LIMIT 1");
+                    $sessionStmt = $db->query("SELECT id FROM sessions WHERE is_current = TRUE LIMIT 1");
                     $currentSession = $sessionStmt->fetchColumn();
-                    $termStmt = $db->query("SELECT id FROM terms WHERE is_current = 1 LIMIT 1");
+                    $termStmt = $db->query("SELECT id FROM terms WHERE is_current = TRUE LIMIT 1");
                     $currentTerm = $termStmt->fetchColumn();
 
                     if ($currentSession && $currentTerm) {
