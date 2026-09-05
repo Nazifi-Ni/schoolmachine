@@ -662,16 +662,20 @@ class ResultController extends Controller
             $subStmt->execute([$class->id, $currentSession->id, $currentTerm->id]);
             $totalSubjects = $subStmt->fetchColumn();
 
-            foreach ($students as $student) {
-                $resStmt = $this->db->prepare("SELECT id FROM results WHERE student_id = ? AND session_id = ? AND term_id = ?");
-                $resStmt->execute([$student->id, $currentSession->id, $currentTerm->id]);
-                $resultRecord = $resStmt->fetch();
+            $resStmt = $this->db->prepare("
+                SELECT r.student_id, COUNT(ri.id) as item_count 
+                FROM results r
+                LEFT JOIN result_items ri ON r.id = ri.result_id
+                WHERE r.session_id = ? AND r.term_id = ? 
+                GROUP BY r.student_id
+            ");
+            $resStmt->execute([$currentSession->id, $currentTerm->id]);
+            $resultsData = $resStmt->fetchAll(\PDO::FETCH_KEY_PAIR);
 
+            foreach ($students as $student) {
                 $is_pending = true;
-                if ($resultRecord) {
-                    $itemStmt = $this->db->prepare("SELECT COUNT(*) FROM result_items WHERE result_id = ?");
-                    $itemStmt->execute([$resultRecord->id]);
-                    $itemCount = $itemStmt->fetchColumn();
+                if (isset($resultsData[$student->id])) {
+                    $itemCount = $resultsData[$student->id];
                     if ($totalSubjects > 0 && $itemCount >= $totalSubjects) {
                         $is_pending = false;
                     } elseif ($totalSubjects == 0 && $itemCount > 0) {
