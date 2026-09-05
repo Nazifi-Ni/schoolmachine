@@ -79,7 +79,7 @@ class StudentController extends Controller
         }
 
         try {
-            $stmt = $db->prepare("INSERT INTO students (registration_number, surname, first_name, middle_name, gender, dob, parent_name, phone, address, current_class_id, admission_date) VALUES (:registration_number, :surname, :first_name, :middle_name, :gender, :dob, :parent_name, :phone, :address, :current_class_id, :admission_date)");
+            $stmt = $db->prepare("INSERT INTO students (registration_number, surname, first_name, middle_name, gender, dob, parent_name, phone, address, current_class_id) VALUES (:registration_number, :surname, :first_name, :middle_name, :gender, :dob, :parent_name, :phone, :address, :current_class_id)");
             
             $stmt->execute([
                 ':registration_number' => $registration_number,
@@ -91,8 +91,7 @@ class StudentController extends Controller
                 ':parent_name' => $_POST['parent_name'] ?? null,
                 ':phone' => $_POST['phone'] ?? null,
                 ':address' => $_POST['address'] ?? null,
-                ':current_class_id' => $current_class_id,
-                ':admission_date' => date('Y-m-d')
+                ':current_class_id' => $current_class_id
             ]);
             $this->redirect('/students');
         } catch (\Exception $e) {
@@ -254,7 +253,7 @@ class StudentController extends Controller
         }
 
         try {
-            $stmt = $db->prepare("INSERT INTO students (registration_number, surname, first_name, middle_name, gender, dob, parent_name, phone, address, current_class_id, admission_date) VALUES (:registration_number, :surname, :first_name, :middle_name, :gender, :dob, :parent_name, :phone, :address, :current_class_id, :admission_date)");
+            $stmt = $db->prepare("INSERT INTO students (registration_number, surname, first_name, middle_name, gender, dob, parent_name, phone, address, current_class_id) VALUES (:registration_number, :surname, :first_name, :middle_name, :gender, :dob, :parent_name, :phone, :address, :current_class_id)");
             
             $stmt->execute([
                 ':registration_number' => $regNo,
@@ -266,8 +265,7 @@ class StudentController extends Controller
                 ':parent_name' => $data['parent_name'] ?? null,
                 ':phone' => $data['phone'] ?? null,
                 ':address' => $data['address'] ?? null,
-                ':current_class_id' => $data['current_class_id'],
-                ':admission_date' => date('Y-m-d')
+                ':current_class_id' => $data['current_class_id']
             ]);
             $this->jsonResponse(['success' => true]);
         } catch (\Exception $e) {

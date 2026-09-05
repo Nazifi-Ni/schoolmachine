@@ -151,7 +151,7 @@ class DashboardController extends Controller
             $term = $stmt->fetch();
             $stats['current_term'] = $term ? $term->name : 'N/A';
             // Recent Activities for Head Teacher
-            $recent = $db->query("SELECT id, CONCAT(first_name, ' ', surname) as title, 'New student registered' as description, COALESCE(admission_date, DATE(created_at)) as date, 'student' as type FROM students ORDER BY id DESC LIMIT 4")->fetchAll();
+            $recent = $db->query("SELECT id, CONCAT(first_name, ' ', surname) as title, 'New student registered' as description, DATE(created_at) as date, 'student' as type FROM students ORDER BY id DESC LIMIT 4")->fetchAll();
 
             $this->jsonResponse(['stats' => $stats, 'role' => $role, 'recentActivities' => $recent]);
 
@@ -217,7 +217,7 @@ class DashboardController extends Controller
                     }
                     
                     // Recent students added to this class
-                    $stmtRecent = $db->prepare("SELECT id, CONCAT(first_name, ' ', surname) as title, 'Enrolled in your class' as description, admission_date as date, 'student' as type FROM students WHERE current_class_id = :class_id ORDER BY id DESC LIMIT 4");
+                    $stmtRecent = $db->prepare("SELECT id, CONCAT(first_name, ' ', surname) as title, 'Enrolled in your class' as description, DATE(created_at) as date, 'student' as type FROM students WHERE current_class_id = :class_id ORDER BY id DESC LIMIT 4");
                     $stmtRecent->execute([':class_id' => $class->id]);
                     $recent = $stmtRecent->fetchAll();
                 }
