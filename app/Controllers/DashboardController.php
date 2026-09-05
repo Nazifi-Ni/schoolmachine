@@ -88,26 +88,28 @@ class DashboardController extends Controller
                         $stmt->execute([':class_id' => $class->id]);
                         $students = $stmt->fetchAll();
                         
+                        $resStmt = $db->prepare("
+                            SELECT r.student_id, COUNT(ri.id) as item_count 
+                            FROM results r
+                            LEFT JOIN result_items ri ON r.id = ri.result_id
+                            WHERE r.session_id = ? AND r.term_id = ? 
+                            GROUP BY r.student_id
+                        ");
+                        $resStmt->execute([$currentSession, $currentTerm]);
+                        $resultsData = $resStmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+
                         $pendingCount = 0;
                         foreach ($students as $student) {
-                            $resStmt = $db->prepare("SELECT id, status FROM results WHERE student_id = ? AND session_id = ? AND term_id = ?");
-                            $resStmt->execute([$student->id, $currentSession, $currentTerm]);
-                            $resultRecord = $resStmt->fetch();
-
                             $is_pending = true;
-                            if ($resultRecord) {
-                                $itemStmt = $db->prepare("SELECT COUNT(*) FROM result_items WHERE result_id = ?");
-                                $itemStmt->execute([$resultRecord->id]);
-                                $itemCount = $itemStmt->fetchColumn();
+                            if (isset($resultsData[$student->id])) {
+                                $itemCount = $resultsData[$student->id];
                                 if ($totalSubjects > 0 && $itemCount >= $totalSubjects) {
                                     $is_pending = false;
                                 } elseif ($totalSubjects == 0 && $itemCount > 0) {
                                     $is_pending = false;
                                 }
                             }
-                            if ($is_pending) {
-                                $pendingCount++;
-                            }
+                            if ($is_pending) $pendingCount++;
                         }
                         $stats['pending_results'] = $pendingCount;
                     }
