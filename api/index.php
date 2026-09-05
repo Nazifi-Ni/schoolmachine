@@ -1,6 +1,10 @@
 <?php
 
-// Start session
+// Configure sessions for cross-domain usage (Vercel frontend -> Render backend)
+session_set_cookie_params([
+    'samesite' => 'None',
+    'secure' => true,
+]);
 session_start();
 
 // Autoload dependencies
