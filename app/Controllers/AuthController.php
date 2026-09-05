@@ -69,7 +69,6 @@ class AuthController extends Controller
 
     public function apiLogin()
     {
-        // Parse JSON input
         $data = json_decode(file_get_contents('php://input'), true);
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
@@ -80,21 +79,18 @@ class AuthController extends Controller
         }
 
         $db = (new Database())->getConnection();
-        
         $stmt = $db->prepare("SELECT u.*, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = :username AND u.status = 'active'");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
-        
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user->password)) {
-            // Clear any existing session (like student sessions)
             session_unset();
-            
             $_SESSION['user_id'] = $user->id;
             $_SESSION['username'] = $user->username;
             $_SESSION['role'] = $user->role_name;
 
+            $teacher_id = null;
             if ($user->role_name === 'Class Teacher') {
                 $teacherStmt = $db->prepare("SELECT id FROM teachers WHERE user_id = :user_id");
                 $teacherStmt->bindParam(':user_id', $user->id);
@@ -102,15 +98,23 @@ class AuthController extends Controller
                 $teacher = $teacherStmt->fetch();
                 if ($teacher) {
                     $_SESSION['teacher_id'] = $teacher->id;
+                    $teacher_id = $teacher->id;
                 }
             }
 
+            // Generate a stateless token for cross-domain use
+            $secret = getenv('AUTH_SECRET') ?: 'iams_arms_secret_key_2025';
+            $token_data = $user->id . '|' . $user->role_name . '|' . ($teacher_id ?? '') . '|' . time();
+            $token = base64_encode($token_data . '|' . hash_hmac('sha256', $token_data, $secret));
+
             $this->jsonResponse([
                 'success' => true,
+                'token' => $token,
                 'user' => [
                     'id' => $user->id,
                     'username' => $user->username,
-                    'role' => $user->role_name
+                    'role' => $user->role_name,
+                    'teacher_id' => $teacher_id
                 ]
             ]);
         } else {
@@ -120,6 +124,39 @@ class AuthController extends Controller
 
     public function apiMe()
     {
+        $secret = getenv('AUTH_SECRET') ?: 'iams_arms_secret_key_2025';
+
+        // Check Authorization Bearer token (cross-domain React frontend)
+        $headers = getallheaders();
+        $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+
+        if (strpos($auth_header, 'Bearer ') === 0) {
+            $token = substr($auth_header, 7);
+            $decoded = base64_decode($token);
+            $last_pipe = strrpos($decoded, '|');
+            if ($last_pipe !== false) {
+                $token_data = substr($decoded, 0, $last_pipe);
+                $provided_hmac = substr($decoded, $last_pipe + 1);
+                $expected_hmac = hash_hmac('sha256', $token_data, $secret);
+                if (hash_equals($expected_hmac, $provided_hmac)) {
+                    $parts = explode('|', $token_data);
+                    if (count($parts) === 4) {
+                        $teacher_id = $parts[2] !== '' ? (int)$parts[2] : null;
+                        $this->jsonResponse([
+                            'user' => [
+                                'id' => (int)$parts[0],
+                                'username' => '',
+                                'role' => $parts[1],
+                                'teacher_id' => $teacher_id
+                            ]
+                        ]);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Fallback: check student session
         if (isset($_SESSION['student_id'])) {
             $this->jsonResponse([
                 'user' => [

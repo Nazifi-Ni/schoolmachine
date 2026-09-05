@@ -25,7 +25,10 @@ const Login = () => {
       const response = await api.post('/login', { username, password });
       if (response.data.success) {
         localStorage.setItem('lastStaffUsername', username);
-        // User is logged in (session cookie is set by PHP)
+        // Store the auth token for cross-domain session management
+        if (response.data.token) {
+          localStorage.setItem('auth_token', response.data.token);
+        }
         navigate('/dashboard');
       }
     } catch (err) {
