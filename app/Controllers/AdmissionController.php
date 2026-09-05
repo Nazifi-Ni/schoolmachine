@@ -12,12 +12,14 @@ class AdmissionController {
 
     // Public method: get classes
     public function apiClasses() {
+        $this->restoreSessionFromToken();
         $stmt = $this->db->query("SELECT id, name, level FROM classes ORDER BY level, name");
         echo json_encode($stmt->fetchAll());
     }
 
     // Public method: Submit application
     public function apiApply() {
+        $this->restoreSessionFromToken();
         $data = json_decode(file_get_contents('php://input'), true);
         
         $req = ['first_name', 'surname', 'gender', 'desired_class_id', 'guardian_name', 'guardian_phone'];
@@ -53,6 +55,7 @@ class AdmissionController {
 
     // Admin: Get applications
     public function apiIndex() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -70,6 +73,7 @@ class AdmissionController {
 
     // Admin: Approve
     public function apiApprove($id) {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -145,6 +149,7 @@ class AdmissionController {
 
     // Admin: Reject
     public function apiReject($id) {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -155,3 +160,4 @@ class AdmissionController {
         echo json_encode(['success' => true]);
     }
 }
+

@@ -196,7 +196,7 @@ class TeacherController extends Controller
         $this->apiCheckAuth();
         $db = (new Database())->getConnection();
         
-        $stmt = $db->query("SELECT t.*, u.username, u.status as user_status FROM teachers t JOIN users u ON t.user_id = u.id");
+        $stmt = $db->query("SELECT t.*, t.surname as last_name, u.username, u.status as user_status FROM teachers t JOIN users u ON t.user_id = u.id");
         $teachers = $stmt->fetchAll();
 
         $this->jsonResponse(['teachers' => $teachers]);
@@ -231,11 +231,11 @@ class TeacherController extends Controller
             ]);
             $userId = $db->lastInsertId();
 
-            $stmt = $db->prepare("INSERT INTO teachers (user_id, first_name, last_name, email, phone) VALUES (:user_id, :first_name, :last_name, :email, :phone)");
+            $stmt = $db->prepare("INSERT INTO teachers (user_id, first_name, surname, email, phone) VALUES (:user_id, :first_name, :surname, :email, :phone)");
             $stmt->execute([
                 ':user_id' => $userId,
                 ':first_name' => $firstName,
-                ':last_name' => $lastName,
+                ':surname' => $lastName,
                 ':email' => $email,
                 ':phone' => $phone
             ]);
@@ -253,7 +253,7 @@ class TeacherController extends Controller
         $this->apiCheckAuth();
         $db = (new Database())->getConnection();
         
-        $stmt = $db->prepare("SELECT t.*, u.username, u.status as user_status FROM teachers t JOIN users u ON t.user_id = u.id WHERE t.id = :id");
+        $stmt = $db->prepare("SELECT t.*, t.surname as last_name, u.username, u.status as user_status FROM teachers t JOIN users u ON t.user_id = u.id WHERE t.id = :id");
         $stmt->execute([':id' => $id]);
         $teacher = $stmt->fetch();
 
@@ -280,10 +280,10 @@ class TeacherController extends Controller
         try {
             $db->beginTransaction();
 
-            $stmt = $db->prepare("UPDATE teachers SET first_name = :first_name, last_name = :last_name, email = :email, phone = :phone WHERE id = :id");
+            $stmt = $db->prepare("UPDATE teachers SET first_name = :first_name, surname = :surname, email = :email, phone = :phone WHERE id = :id");
             $stmt->execute([
                 ':first_name' => $firstName,
-                ':last_name' => $lastName,
+                ':surname' => $lastName,
                 ':email' => $email,
                 ':phone' => $phone,
                 ':id' => $id

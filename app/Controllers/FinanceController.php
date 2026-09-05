@@ -22,6 +22,7 @@ class FinanceController {
 
     // GET /api/finance/fees
     public function apiGetFees() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             echo json_encode(['error' => 'Unauthorized']);
@@ -50,6 +51,7 @@ class FinanceController {
 
     // POST /api/finance/fees
     public function apiSaveFee() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -78,6 +80,7 @@ class FinanceController {
 
     // GET /api/finance/pending-approvals
     public function apiGetPendingApprovals() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             echo json_encode(['error' => 'Unauthorized']);
@@ -97,6 +100,7 @@ class FinanceController {
 
     // POST /api/finance/approvals/{id}
     public function apiProcessApproval($id) {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             echo json_encode(['error' => 'Unauthorized']);
@@ -161,6 +165,7 @@ class FinanceController {
 
     // GET /api/finance/bills
     public function apiGetBills() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -202,6 +207,7 @@ class FinanceController {
 
     // POST /api/finance/bills/generate
     public function apiGenerateBills() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -246,6 +252,7 @@ class FinanceController {
 
     // POST /api/finance/pay
     public function apiRecordPayment() {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -296,6 +303,7 @@ class FinanceController {
     
     // GET /api/finance/student/{id}
     public function apiGetStudentFinance($studentId) {
+        $this->restoreSessionFromToken();
         if ($_SESSION['role'] !== 'Head Teacher') {
             http_response_code(403);
             return;
@@ -337,4 +345,5 @@ class FinanceController {
         ]);
     }
 }
+
 

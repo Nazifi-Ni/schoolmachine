@@ -150,10 +150,10 @@ class ClassController extends Controller
         $this->apiCheckAuth();
         $db = (new Database())->getConnection();
         
-        $stmt = $db->query("SELECT c.*, t.first_name, t.last_name FROM classes c LEFT JOIN teachers t ON c.teacher_id = t.id");
+        $stmt = $db->query("SELECT c.*, t.first_name, t.surname as last_name FROM classes c LEFT JOIN teachers t ON c.teacher_id = t.id");
         $classes = $stmt->fetchAll();
 
-        $stmt = $db->query("SELECT id, first_name, last_name FROM teachers");
+        $stmt = $db->query("SELECT id, first_name, surname as last_name FROM teachers");
         $teachers = $stmt->fetchAll();
 
         $this->jsonResponse(['classes' => $classes, 'teachers' => $teachers]);
