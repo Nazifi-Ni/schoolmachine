@@ -15,24 +15,24 @@ if (!$data) {
     die("Invalid JSON");
 }
 
-$tables = ["roles", "users", "sessions", "terms", "classes", "teachers", "students", "subjects", "grading_system", "results", "result_items", "fee_structures", "student_fees", "fee_payments"];
+// Corrected order: teachers must be before classes
+$tables = ["roles", "users", "sessions", "terms", "teachers", "classes", "students", "subjects", "grading_system", "results", "result_items", "fee_structures", "student_fees", "fee_payments"];
 
 try {
     $db->beginTransaction();
     
-    // Clear existing data to avoid conflicts with IDs
-    $tableList = implode(", ", $tables);
+    // Clear existing data to avoid conflicts with IDs, using the reverse order to avoid FK errors during TRUNCATE
+    $reverseTables = array_reverse($tables);
+    $tableList = implode(", ", $reverseTables);
     $db->exec("TRUNCATE $tableList CASCADE");
     
     foreach ($tables as $table) {
         if (empty($data[$table])) continue;
         
-        // Fix: specify table_schema = public so we don't get auth.users columns
         $stmt = $db->query("SELECT column_name FROM information_schema.columns WHERE table_name = '$table' AND table_schema = 'public'");
         $validColumns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         foreach ($data[$table] as $row) {
-            // Filter row to only include valid columns
             $filteredRow = [];
             foreach ($row as $key => $value) {
                 if (in_array($key, $validColumns)) {
@@ -40,7 +40,6 @@ try {
                 }
             }
             
-            // Convert boolean fields for PostgreSQL
             foreach (["is_current", "is_core"] as $boolField) {
                 if (isset($filteredRow[$boolField])) {
                     $filteredRow[$boolField] = $filteredRow[$boolField] ? "TRUE" : "FALSE";
@@ -58,7 +57,6 @@ try {
             $stmt->execute($values);
         }
         
-        // Reset sequence so auto-increment works for new inserts
         $db->exec("SELECT setval(pg_get_serial_sequence('$table', 'id'), COALESCE(MAX(id), 1)) FROM $table");
     }
     
