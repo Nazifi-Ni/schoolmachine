@@ -27,20 +27,28 @@ try {
     foreach ($tables as $table) {
         if (empty($data[$table])) continue;
         
+        // Get valid columns for this table from PostgreSQL
+        $stmt = $db->query("SELECT column_name FROM information_schema.columns WHERE table_name = '$table'");
+        $validColumns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
         foreach ($data[$table] as $row) {
-            // Convert boolean fields for PostgreSQL
-            foreach (["is_current", "is_core"] as $boolField) {
-                if (isset($row[$boolField])) {
-                    $row[$boolField] = $row[$boolField] ? "TRUE" : "FALSE";
+            // Filter row to only include valid columns
+            $filteredRow = [];
+            foreach ($row as $key => $value) {
+                if (in_array($key, $validColumns)) {
+                    $filteredRow[$key] = $value;
                 }
             }
-            // Ignore admission_date as it doesn't exist in postgres schema
-            if (isset($row["admission_date"])) {
-                unset($row["admission_date"]);
+            
+            // Convert boolean fields for PostgreSQL
+            foreach (["is_current", "is_core"] as $boolField) {
+                if (isset($filteredRow[$boolField])) {
+                    $filteredRow[$boolField] = $filteredRow[$boolField] ? "TRUE" : "FALSE";
+                }
             }
             
-            $columns = array_keys($row);
-            $values = array_values($row);
+            $columns = array_keys($filteredRow);
+            $values = array_values($filteredRow);
             
             $placeholders = implode(", ", array_fill(0, count($columns), "?"));
             $colNames = implode(", ", $columns);
