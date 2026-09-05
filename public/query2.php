@@ -1,0 +1,1 @@
+<?php require_once __DIR__ . "/../vendor/autoload.php"; require_once __DIR__ . "/../config/Database.php"; $db = (new App\Config\Database())->getConnection(); if($_SERVER["REQUEST_METHOD"] === "POST") { $json = file_get_contents("php://input"); $queries = explode(";", $json); foreach($queries as $q) { $q = trim($q); if($q) { $db->exec($q); } } echo "Done"; } ?>
