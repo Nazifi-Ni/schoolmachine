@@ -404,3 +404,4 @@ class StudentController extends Controller
         }
     }
 }
+

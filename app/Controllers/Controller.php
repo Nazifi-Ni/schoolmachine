@@ -45,11 +45,62 @@ class Controller
         exit;
     }
 
-    // Auth helper
+    /**
+     * Restores session from Bearer token if session is not already set.
+     * This enables cross-domain auth (Vercel frontend -> Render backend).
+     */
+    protected function restoreSessionFromToken()
+    {
+        if (isset($_SESSION['user_id'])) {
+            return; // already have a valid session
+        }
+
+        $secret = getenv('AUTH_SECRET') ?: 'iams_arms_secret_key_2025';
+        $headers = getallheaders();
+        $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+
+        if (strpos($auth_header, 'Bearer ') !== 0) {
+            return;
+        }
+
+        $token = substr($auth_header, 7);
+        $decoded = base64_decode($token);
+        $last_pipe = strrpos($decoded, '|');
+
+        if ($last_pipe === false) return;
+
+        $token_data = substr($decoded, 0, $last_pipe);
+        $provided_hmac = substr($decoded, $last_pipe + 1);
+        $expected_hmac = hash_hmac('sha256', $token_data, $secret);
+
+        if (!hash_equals($expected_hmac, $provided_hmac)) {
+            return;
+        }
+
+        $parts = explode('|', $token_data);
+        if (count($parts) !== 4) return;
+
+        // Restore session data from token
+        $_SESSION['user_id'] = (int)$parts[0];
+        $_SESSION['role'] = $parts[1];
+        $_SESSION['teacher_id'] = $parts[2] !== '' ? (int)$parts[2] : null;
+        $_SESSION['username'] = '';
+    }
+
+    // Auth helper for traditional PHP views
     protected function requireRole($role)
     {
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== $role) {
             $this->redirect('/login');
+        }
+    }
+
+    // Auth helper for API endpoints (supports both session and Bearer token)
+    protected function requireApiAuth()
+    {
+        $this->restoreSessionFromToken();
+        if (!isset($_SESSION['user_id'])) {
+            $this->jsonResponse(['error' => 'Not authenticated'], 401);
         }
     }
 }

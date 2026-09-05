@@ -122,6 +122,7 @@ class DashboardController extends Controller
     }
     public function apiIndex()
     {
+        $this->restoreSessionFromToken();
         if (!isset($_SESSION['user_id'])) {
             $this->jsonResponse(['error' => 'Not authenticated'], 401);
             return;
